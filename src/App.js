@@ -21,6 +21,10 @@ import '@pnotify/core/dist/BrightTheme.css';
 const App = () => {
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(authOperations.getCurrentUserOperation());
+  }, [dispatch]);
+
   const [showAuth, setShowAuth] = useState(false);
   const [authButtonText, setAuthButtonText] = useState('authorization');
   const [authActive, setAuthActive] = useState(false);

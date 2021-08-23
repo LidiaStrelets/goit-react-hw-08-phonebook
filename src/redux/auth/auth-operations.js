@@ -1,5 +1,8 @@
-import { loginUser, logoutUser, registerUser, token } from 'services/api';
+import { getCurrentUser, loginUser, logoutUser, registerUser, token } from 'services/api';
 import {
+  getCurrentUserError,
+  getCurrentUserRequest,
+  getCurrentUserSuccess,
   loginUserError,
   loginUserRequest,
   loginUserSuccess,
@@ -46,5 +49,38 @@ export const logoutUserOperation = () => async dispatch => {
     token.reset();
   } catch (error) {
     dispatch(logoutUserError(error.response.status));
+  }
+};
+
+// export const getCurrentUserOperation = () => async dispatch => {
+//   dispatch(getCurrentUserRequest());
+
+//     try {
+//       const answer = await getCurrentUser();
+//   console.log(answer);
+//       dispatch(getCurrentUserSuccess(answer));
+
+//     } catch (error) {
+//       dispatch(getCurrentUserError(error.response.status));
+//     }
+// };
+export const getCurrentUserOperation = () => async (dispatch, getState) => {
+  const {
+    auth: { token: persistedToken },
+  } = getState();
+
+  if (!persistedToken) {
+    return;
+  }
+
+  token.set(persistedToken);
+  dispatch(getCurrentUserRequest());
+
+  try {
+    const response = await getCurrentUser();
+
+    dispatch(getCurrentUserSuccess(response.data));
+  } catch (error) {
+    dispatch(getCurrentUserError(error.response.status));
   }
 };

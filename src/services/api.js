@@ -17,7 +17,6 @@ export async function getContacts() {
 }
 export async function addContact(contact) {
   const { data } = await axios.post(`${BASE_URL}contacts`, contact);
-  console.log({ data });
   return data;
 }
 export async function removeContact(id) {
@@ -43,7 +42,11 @@ export async function loginUser({ email, password }) {
 }
 
 export async function logoutUser() {
-  console.log('log out request gone');
   const answer = await axios.post(`${BASE_URL}users/logout`);
+  return answer;
+}
+
+export async function getCurrentUser() {
+  const answer = await axios.get(`${BASE_URL}users/current`);
   return answer;
 }

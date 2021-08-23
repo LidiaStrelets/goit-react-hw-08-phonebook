@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
 import { createReducer } from '@reduxjs/toolkit';
 import {
+  getCurrentUserError,
+  getCurrentUserSuccess,
   loginUserError,
   loginUserSuccess,
   logoutUserError,
@@ -15,7 +17,7 @@ const user = createReducer(initialUserState, {
   [registerUserSuccess]: (_, { payload }) => payload.user,
   [loginUserSuccess]: (_, { payload }) => payload.user,
   [logoutUserSuccess]: () => initialUserState,
-  //   [authActions.getCurrentUserSuccess]: (_, { payload }) => payload,
+  [getCurrentUserSuccess]: (_, { payload }) => payload,
 });
 
 const token = createReducer(null, {
@@ -28,6 +30,7 @@ const userAuthorized = createReducer(false, {
   [registerUserSuccess]: () => true,
   [loginUserSuccess]: () => true,
   [logoutUserSuccess]: () => false,
+  [getCurrentUserSuccess]: () => true,
 });
 
 const setError = (_, { payload }) => {
@@ -47,7 +50,7 @@ const error = createReducer(null, {
   [registerUserError]: setError,
   [loginUserError]: setError,
   [logoutUserError]: setError,
-  //   [authActions.getCurrentUserError]: setError,
+  [getCurrentUserError]: setError,
 });
 
 const authReducer = combineReducers({
