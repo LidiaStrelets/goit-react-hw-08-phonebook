@@ -4,7 +4,7 @@ import ButtonAdd from '../ButtonAdd';
 
 import styles from './Form.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { contactsSelectors, contactsOperations } from 'redux/contacts';
+import { contactsSelectors, contactsOperations } from './../../redux/contacts';
 
 const Form = () => {
   const [name, setName] = useState('');

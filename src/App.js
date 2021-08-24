@@ -1,22 +1,23 @@
-import 'App.css';
 import React, { useEffect, useState } from 'react';
-import { NavLink, Route } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-import Register from 'pages/register';
-import Login from 'pages/login';
-import ContactsPage from 'pages/contacts';
-import HomePage from 'pages/home';
+import Register from './pages/register';
+import Login from './pages/login';
+import ContactsPage from './pages/contacts';
+import HomePage from './pages/home';
 import styled from 'styled-components';
 
 import classNames from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
-import authSelectors from 'redux/auth/auth-selectors';
-import { authOperations } from 'redux/auth';
-import { contactsSelectors } from 'redux/contacts';
+import authSelectors from './redux/auth/auth-selectors';
+import { authOperations } from './redux/auth';
+import { contactsSelectors } from './redux/contacts';
 
 import { error } from '@pnotify/core';
 import '@pnotify/core/dist/PNotify.css';
 import '@pnotify/core/dist/BrightTheme.css';
+import PrivateRoute from './components/PrivateRoute';
+import PublicRoute from './components/PublicRoute';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -33,6 +34,8 @@ const App = () => {
   const currentUserName = useSelector(authSelectors.getUserName);
 
   const currentError = useSelector(contactsSelectors.getError);
+  const isRefreshing = useSelector(authSelectors.getRefreshing);
+
   useEffect(() => {
     if (currentError) error({ text: currentError });
   }, [currentError]);
@@ -42,98 +45,108 @@ const App = () => {
   };
 
   return (
-    <div className="App">
-      <nav>
-        <Navlist>
-          <NavItem className="navItem">
-            <CustomNavLink
-              onClick={() => {
-                setAuthActive(false);
-              }}
-              exact
-              className="navLink"
-              activeClassName="navLinkActive"
-              to="/"
-            >
-              home
-            </CustomNavLink>
-          </NavItem>
-          <NavItem className="navItem">
-            <CustomNavLink
-              onClick={() => {
-                setAuthActive(false);
-              }}
-              className="navLink"
-              activeClassName="navLinkActive"
-              to="/contacts"
-            >
-              contacts
-            </CustomNavLink>
-          </NavItem>
-          {!userStatus ? (
-            <NavItem
-              onClick={() => {
-                setAuthButtonText('authorization');
-                setShowAuth(!showAuth);
-                setAuthActive(!authActive);
-                console.log('auth click');
-
-                if (
-                  window.location.href.includes('register') ||
-                  window.location.href.includes('login')
-                ) {
-                  setAuthActive(true);
-                }
-              }}
-              className={classNames('navItem', ' withList', { current: authActive })}
-              style={{ borderRadius: !showAuth && '20px' }}
-            >
-              {authButtonText}
-
-              {showAuth && (
-                <AuthList>
-                  <li>
-                    <CustomNavLink
-                      className="navLink"
-                      activeClassName="navLinkActive"
-                      exact
-                      to="/register"
-                      onClick={() => {
-                        setAuthButtonText('register');
-                      }}
-                    >
-                      register
-                    </CustomNavLink>
-                  </li>
-                  <li>
-                    <CustomNavLink
-                      onClick={() => {
-                        setAuthButtonText('login');
-                      }}
-                      className="navLink"
-                      activeClassName="navLinkActive"
-                      to="/login"
-                    >
-                      login
-                    </CustomNavLink>
-                  </li>
-                </AuthList>
-              )}
+    !isRefreshing && (
+      <div style={{ textAlign: 'center' }} className="App">
+        <nav>
+          <Navlist>
+            <NavItem className="navItem">
+              <CustomNavLink
+                onClick={() => {
+                  setAuthActive(false);
+                }}
+                exact
+                className="navLink"
+                activeClassName="navLinkActive"
+                to="/"
+              >
+                home
+              </CustomNavLink>
             </NavItem>
-          ) : (
-            <UserMenu>
-              <Greeting>Welcome, {currentUserName}!</Greeting>
-              <Exit onClick={handleLogOut}>Log out</Exit>
-            </UserMenu>
-          )}
-        </Navlist>
-      </nav>
+            {userStatus && (
+              <NavItem className="navItem">
+                <CustomNavLink
+                  onClick={() => {
+                    setAuthActive(false);
+                  }}
+                  className="navLink"
+                  activeClassName="navLinkActive"
+                  to="/contacts"
+                >
+                  contacts
+                </CustomNavLink>
+              </NavItem>
+            )}
+            {!userStatus ? (
+              <NavItem
+                onClick={() => {
+                  setAuthButtonText('authorization');
+                  setShowAuth(!showAuth);
+                  setAuthActive(!authActive);
 
-      <Route path="/" exact component={HomePage} />
-      <Route path="/register" exact component={Register} />
-      <Route path="/login" exact component={Login} />
-      <Route path="/contacts" exact component={ContactsPage} />
-    </div>
+                  if (
+                    window.location.href.includes('register') ||
+                    window.location.href.includes('login')
+                  ) {
+                    setAuthActive(true);
+                  }
+                }}
+                className={classNames('navItem', ' withList', { current: authActive })}
+                style={{ borderRadius: !showAuth && '20px' }}
+              >
+                {authButtonText}
+
+                {showAuth && (
+                  <AuthList>
+                    <li>
+                      <CustomNavLink
+                        className="navLink"
+                        activeClassName="navLinkActive"
+                        exact
+                        to="/register"
+                        onClick={() => {
+                          setAuthButtonText('register');
+                        }}
+                      >
+                        register
+                      </CustomNavLink>
+                    </li>
+                    <li>
+                      <CustomNavLink
+                        onClick={() => {
+                          setAuthButtonText('login');
+                        }}
+                        className="navLink"
+                        activeClassName="navLinkActive"
+                        to="/login"
+                      >
+                        login
+                      </CustomNavLink>
+                    </li>
+                  </AuthList>
+                )}
+              </NavItem>
+            ) : (
+              <UserMenu>
+                <Greeting>Welcome, {currentUserName}!</Greeting>
+                <Exit onClick={handleLogOut}>Log out</Exit>
+              </UserMenu>
+            )}
+          </Navlist>
+        </nav>
+        <PublicRoute path="/" exact>
+          <HomePage />
+        </PublicRoute>
+        <PublicRoute path="/register" exact restricted>
+          <Register />
+        </PublicRoute>
+        <PublicRoute path="/login" exact restricted>
+          <Login />
+        </PublicRoute>
+        <PrivateRoute path="/contacts" exact>
+          <ContactsPage />
+        </PrivateRoute>
+      </div>
+    )
   );
 };
 

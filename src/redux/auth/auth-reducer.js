@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import { createReducer } from '@reduxjs/toolkit';
 import {
   getCurrentUserError,
+  getCurrentUserRequest,
   getCurrentUserSuccess,
   loginUserError,
   loginUserSuccess,
@@ -33,6 +34,12 @@ const userAuthorized = createReducer(false, {
   [getCurrentUserSuccess]: () => true,
 });
 
+const isRefreshing = createReducer(false, {
+  [getCurrentUserRequest]: () => true,
+  [getCurrentUserSuccess]: () => false,
+  [getCurrentUserError]: () => false,
+});
+
 const setError = (_, { payload }) => {
   switch (payload) {
     case 400:
@@ -58,6 +65,7 @@ const authReducer = combineReducers({
   token,
   error,
   userAuthorized,
+  isRefreshing,
 });
 
 export default authReducer;

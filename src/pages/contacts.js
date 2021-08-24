@@ -1,9 +1,10 @@
-import Contacts from 'components/Contacts';
-import Form from 'components/Form';
-import Section from 'components/Section';
+import Contacts from './../components/Contacts';
+import Form from './../components/Form';
+import Section from './../components/Section';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { contactsOperations, contactsSelectors } from 'redux/contacts';
+
+import { contactsOperations, contactsSelectors } from './../redux/contacts';
 
 const ContactsPage = () => {
   const items = useSelector(contactsSelectors.getItems);

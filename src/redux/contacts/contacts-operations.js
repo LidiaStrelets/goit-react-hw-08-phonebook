@@ -16,7 +16,6 @@ export const fetchContacts = () => async dispatch => {
 
   try {
     const data = await getContacts();
-    console.log({ data });
     dispatch(fetchContactsSuccess(data));
   } catch (error) {
     dispatch(fetchContactsError(error.response.status));

@@ -4,7 +4,7 @@ import Input from '../Input';
 import ContactsList from '../ContactsList';
 import styles from './Contacts.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { contactsSelectors, actions } from 'redux/contacts';
+import { contactsSelectors, actions } from './../../redux/contacts';
 
 const Contacts = ({ title }) => {
   const filter = useSelector(contactsSelectors.getFilter);
